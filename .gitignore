@@ -1,0 +1,6 @@
+/CurrencyRates/bin
+/CurrencyRates/obj
+/CurrencyRates/.env
+/TestSuite/CurrencyRate.Tests/bin
+/TestSuite/CurrencyRate.Tests/obj
+/.idea

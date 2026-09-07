@@ -1,0 +1,127 @@
+﻿@page
+@using CurrencyRates.Data
+@model IndexModel
+@{
+ViewData["Title"] = "Currency Rates";
+}
+
+<div class="text-center">
+    <h1 class=fw-bold title>Currency Rates</h1>
+    <p class="subtitle mb-0">
+        Select a currency and date to view exchange rates
+    </p>
+</div>
+
+<div class="container mt-3">
+    <div class="card mx-auto">
+        <div class="card-body">
+            <div class="search-section">
+                <div class="text-center">
+                    <h5 class="card-subtitle mb-2 mb-4">Pick the currency and date</h5>
+                </div>
+                <form method="post">
+                    <div class="row g-3 justify-content-center">
+                        <div class="col-12 col-md-3">
+                            <label class="form-label">Currency</label>
+
+                            <select asp-for="Currency" class="form-select">
+                                <option value="AUD">AUD</option>
+                                @foreach (string currency in CurrencyRatesContext.CurrencyNames)
+                                {
+                                    <option value="@currency"> @currency </option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-3">
+                            <label class="form-label">Date</label>
+                            <input id="date" asp-for="Date" type="date" class="form-control"/>
+                        </div>
+
+                        <div class="col-auto d-flex align-items-end">
+                            <button type="submit" class="btn search-button" asp-page-handler="CurrencyDetails"> Search
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>    
+
+            <hr/>
+
+            <div class="row g-x3">
+                <div class="col-12 col-md-7 left-container">
+                    <div class="d-table w-100">
+                        <div class="d-table-row fw-bold">
+                            <div class="d-table-cell border-bottom px-2 py-1">
+                                Currency
+                            </div>
+                            <div class="d-table-cell border-bottom px-2 py-1">
+                                Source
+                            </div>
+                            <div class="d-table-cell border-bottom px-2 py-1 value-cell">
+                                Value
+                            </div>
+                            <div class="d-table-cell border-bottom px-2 py-1 value-cell">
+                                Change
+                            </div>
+                        </div>
+                        @if (Model.CalculatedRates != null)
+                        {
+                            for (int i = 0; i < Model.CalculatedRates.Count; i++)
+                            {
+                                <div class="d-table-row">
+                                    <div class="d-table-cell border-bottom px-2 py-1">
+                                        <a href="#" onclick="loadGraph(
+                                               '@Model.Currency',
+                                               '@(CurrencyRatesContext.CurrencyNames[i] == Model.Currency ? "AUD" : CurrencyRatesContext.CurrencyNames[i])'
+                                               ); return false;">
+                                            @if (CurrencyRatesContext.CurrencyNames[i] == Model.Currency)
+                                            {
+                                                @($"{Model.Currency}-AUD")
+                                            }
+                                            else
+                                            {
+                                                @($"{Model.Currency}-{CurrencyRatesContext.CurrencyNames[i]}")
+                                            }
+                                        </a>
+                                    </div>
+                                    <div class="d-table-cell border-bottom px-2 py-1">
+                                        @Model.Sources[i]
+                                    </div>
+                                    <div class="d-table-cell border-bottom px-2 py-1 value-cell">
+                                        @Model.CalculatedRates[i].ToString("F6")
+                                    </div>
+                                    <div class="d-table-cell border-bottom px-2 py-1 value-cell">
+                                        @if (Model.CalculatedChange[i] < 0)
+                                        {
+                                            <p class="text-danger">
+                                                ⮟@Model.CalculatedChange[i]%
+                                            </p>
+                                        }
+                                        else if (Model.CalculatedChange[i] > 0)
+                                        {
+                                            <p class="text-success">
+                                                ⮝@Model.CalculatedChange[i]%
+                                            </p>
+                                        }
+                                        else
+                                        {
+                                            <p>@Model.CalculatedChange[i]%</p>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="col-12 col-md">
+                    <div class="graph-container">
+                        <h2> Currency Trends</h2>
+                        <img class="img-fluid w-100" id="GraphImage" alt="Click on a currency from the table"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

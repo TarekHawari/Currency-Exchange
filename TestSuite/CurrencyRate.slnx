@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../CurrencyRates/CurrencyRates.csproj" />
+  <Project Path="CurrencyRate.Tests/CurrencyRate.Tests.csproj" />
+</Solution>
